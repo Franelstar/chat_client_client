@@ -81,6 +81,8 @@ public class Car_protocol {
 			resultat_commande.add("2000");
 			resultat_commande.add(parts[1]);
 			resultat_commande.add(parts[2]);
+		} else {
+			resultat_commande.add("2001");
 		}
 	}
 	

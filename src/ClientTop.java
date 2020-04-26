@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -133,9 +134,50 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void rechercheConnecte() {
+	public void rechercheConnecte() throws IOException {
 		final ExecutorService es = Executors.newFixedThreadPool(20);
-		String ip = "192.168.43.";
+		
+		String ip = "";
+		for (
+			    final Enumeration< NetworkInterface > interfaces =
+			        NetworkInterface.getNetworkInterfaces( );
+			    interfaces.hasMoreElements( );
+			)
+			{
+			    final NetworkInterface cur = interfaces.nextElement( );
+
+			    if ( cur.isLoopback( ) )
+			    {
+			        continue;
+			    }
+
+			    System.out.println( "interface " + cur.getName( ) );
+
+			    for ( final InterfaceAddress addr : cur.getInterfaceAddresses( ) )
+			    {
+			        final InetAddress inet_addr = addr.getAddress( );
+
+			        if ( !( inet_addr instanceof Inet4Address ) )
+			        {
+			            continue;
+			        }
+			        ip = inet_addr.getHostAddress( );
+
+			        System.out.println(
+			            "  address: " + inet_addr.getHostAddress( ) +
+			            "/" + addr.getNetworkPrefixLength( )
+			        );
+
+			        System.out.println(
+			            "  broadcast address: " +
+			                addr.getBroadcast( ).getHostAddress( )
+			        );
+			    }
+			}
+		
+		
+		String[] temp = ip.split(".");
+		ip = temp[0]+"."+temp[1]+"."+temp[2];
 		final int timeout = 200;
 		final ArrayList<Future<Boolean>> futures = new ArrayList<>();
 		int port = 1234;
