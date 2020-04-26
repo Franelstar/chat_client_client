@@ -4,8 +4,6 @@
 package Protocol;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Vector;
 
 import users.Users;
 
@@ -14,6 +12,7 @@ import users.Users;
  * @author Fabien KAMBU
  * @author Kevin KANA
  * @author Jeremie OUEDRAOGO
+ * @author NGUYEN Truong Thinh
  * 
  * @version 1
  *
@@ -39,9 +38,6 @@ public class Car_protocol {
 				break;
 			case "users":
 				users();
-				break;
-			case "nuser":
-				nuser();
 				break;
 			case "sstatus":
 				sstatus();
@@ -114,18 +110,6 @@ public class Car_protocol {
 			}
 		}
 	}
-	/*public String users_(Vector<Users> list_users) {
-		if(!list_users.isEmpty()) {
-			String users = "USERS ";
-			
-			for(Users user : list_users) {
-				users += user.getName() + " ";
-			}
-			
-			return users;
-		}
-		return "USERS";
-	}*/
 	
 	/**
 	 * COMMANDE MESSAGE
@@ -165,12 +149,14 @@ public class Car_protocol {
 				resultat_commande.add("ERREUR 12002");
 			} else {
 				String message = mesetuti[1];
-				String[] dest = mesetuti[0].trim().split("$$$");
-				
+				String[] dest = mesetuti[0].split("@@");
+				System.out.println(dest.length);
 				resultat_commande.add("12000");
 				resultat_commande.add(message);
-				for(int i = 0; i < dest.length; i++)
+				for(int i = 0; i < dest.length; i++) {
 					resultat_commande.add(dest[i]);
+					System.out.println(dest[i]);
+				}
 			}
 		}
 	}
@@ -178,39 +164,6 @@ public class Car_protocol {
 	/*public String sendto_(String message) {
 		return "SENDTO@@@" + message;
 	}*/
-	
-	/**
-	 * COMMANDE DECONNECT
-	 * Code général 5000
-	 */
-	public void deconnect() {
-		if(parts.length != 1) {
-			resultat_commande.add("ERREUR 5001");
-		}else{
-			resultat_commande.add("5000");
-		}
-	}
-	
-	public String deconnect_() {
-		return "DECONNECT";
-	}
-	
-	/**
-	 * COMMANDE DISCONNECTED
-	 * Code général 6000
-	 */
-	public void disconnected() {
-		if(parts.length != 2) {
-			resultat_commande.add("ERREUR 6001");
-		}else{
-			resultat_commande.add("6000");
-			resultat_commande.add(parts[1]);
-		}
-	}
-	
-	public String disconnected_(Users user) {
-		return "DISCONNECTED " + user.getName();
-	}
 	
 	/**
 	 * COMMANDE QUIT
@@ -226,26 +179,6 @@ public class Car_protocol {
 	
 	public String quit_() {
 		return "QUIT";
-	}
-	
-	/**
-	 * COMMANDE USERS
-	 * Liste des utilisateurs de la messagerie
-	 * Code général 8000
-	 * 
-	 * @param list_users
-	 * @return
-	 */
-	public void nuser() {
-		if(parts.length < 2) {
-			resultat_commande.add("ERREUR 8001");
-		}else{
-			resultat_commande.add("8000");
-			resultat_commande.add(parts[1]);
-		}
-	}
-	public String nuser_(Users user) {
-		return "NUSER " + user.getName();
 	}
 	
 	/**

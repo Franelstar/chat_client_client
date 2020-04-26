@@ -1,8 +1,10 @@
 import java.io.*;
 import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
-import java.util.Vector;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -14,10 +16,19 @@ import javax.swing.*;
 import Protocol.Car_protocol;
 import users.Users;
 
-import static java.lang.System.out;
-
 import java.awt.*;
 import java.awt.event.*;
+
+/**
+ * @author Franck Anael MBIAYA
+ * @author Fabien KAMBU
+ * @author Kevin KANA
+ * @author Jeremie OUEDRAOGO
+ * @author NGUYEN Truong Thinh
+ * 
+ * @version 1
+ *
+ */
 
 public final class ClientTop extends JFrame implements ActionListener {
 	String username;
@@ -116,7 +127,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 			
 			chatip_commande.setText(null);
 		} else {
-			System.out.println(car_protocol.broadcast_(chatip.getText())+" (((( ICI");
 			sendtoall(car_protocol.broadcast_(chatip.getText()));
 			//pw.println("MESSAGE " + chatip.getText());
 			chatip.setText(null);
@@ -124,14 +134,16 @@ public final class ClientTop extends JFrame implements ActionListener {
 	}
 	
 	public static void main(String ... args) {
-		String SetUserName = JOptionPane.showInputDialog(null, "Please Entrez votre nom :",
-				"KSTARK CHAT APP.", JOptionPane.PLAIN_MESSAGE);
+		String SetUserName = JOptionPane.showInputDialog(null, "SVP Entrez votre nom :",
+				"CONNEXION TO CHAT", JOptionPane.PLAIN_MESSAGE);
 		String servername = "localhost";
 		
-		try {
-			new ClientTop(SetUserName, servername);
-		}catch(Exception ex) {
-			System.out.println(ex.getMessage());
+		if(SetUserName != null && !SetUserName.trim().equals("")) {
+			try {
+				new ClientTop(SetUserName, servername);
+			}catch(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
 		}
 	}
 	
@@ -345,6 +357,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 					ArrayList<String> reponseProtocol = car_protocol.requete(Line);
 					//output.println(Line+"\n");
 					
+					DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
+					
 					if(!est_utilisateurIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15)) && gotuser == null) {
 						 if(reponseProtocol.get(0) == "2000" && !est_utilisateur(reponseProtocol.get(1))) {
 				        	  gotuser = new Users(socketClient.getRemoteSocketAddress().toString().substring(1, 15), reponseProtocol.get(1), 
@@ -391,22 +406,25 @@ public final class ClientTop extends JFrame implements ActionListener {
 					if (gotuser != null && est_utilisateur(gotuser.getName())){
 												
 						if(reponseProtocol.get(0).equals("7000")) {
-							
+							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n\n");
 							if(users.remove(gotuser)) {
 								clients.remove(this);
-								chatmsg.append(gotuser.getName() + " ==> Déconnecté\n");
+								chatmsg.append(gotuser.getName() + " ==> Déconnecté\n\n");
 								socketClient.close();
 							}
 							
 						} else if(reponseProtocol.get(0).equals("4000")) {
 							if(gotuser.getName().equals(username)){
+								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append("Moi ==> ");
-								chatmsg.append(reponseProtocol.get(1)+"\n");
+								chatmsg.append(reponseProtocol.get(1)+"\n\n");
 							} else if(!gotuser.getName().equals("")) {
+								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append(gotuser.getName()+" ==> ");
-								chatmsg.append(reponseProtocol.get(1)+"\n");
+								chatmsg.append(reponseProtocol.get(1)+"\n\n");
 							}
 						} else if(reponseProtocol.get(0).equals("3000")) { //USERS
+							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							if(reponseProtocol.size() == 1){
 								chatmsg.append("Lisre des utilisateurs connectés :\n");
 								for(Users user : users) {
@@ -414,6 +432,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 										chatmsg.append(user.getName()+" ==> Connecté\n");
 									}
 								}
+								chatmsg.append("\n");
 							} else {
 								for(int i = 1; i < reponseProtocol.size(); i++) {
 									for(Users user : users) {
@@ -422,18 +441,20 @@ public final class ClientTop extends JFrame implements ActionListener {
 										}
 									}
 								}
-
+								chatmsg.append("\n");
 							}
 						} else if(reponseProtocol.get(0).equals("9000")) {
 							if(gotuser != null && !gotuser.getName().equals("")) {
+								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								gotuser.setStatus(Integer.parseInt(reponseProtocol.get(1)));
-								chatmsg.append(gotuser.getName() + " ==> Nouveau status à " + reponseProtocol.get(1) + "\n");
+								chatmsg.append(gotuser.getName() + " ==> Nouveau status à " + reponseProtocol.get(1) + "\n\n");
 								
 								if(gotuser.getName().equals(username)) {
 									status = Integer.parseInt(reponseProtocol.get(1));
 								}
 							}
 						} else if(reponseProtocol.get(0).equals("10000")) { //USERS
+							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							if(reponseProtocol.size() == 1){
 								chatmsg.append("Status des utilisateurs connectés :\n");
 								for(Users user : users) {
@@ -441,6 +462,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 										chatmsg.append(user.getName()+" ==> Status " + user.getStatus() + "\n");
 									}
 								}
+								chatmsg.append("\n");
 							} else {
 								for(int i = 1; i < reponseProtocol.size(); i++) {
 									for(Users user : users) {
@@ -449,10 +471,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 										}
 									}
 								}
+								chatmsg.append("\n");
 							}
 						} else if(reponseProtocol.get(0).equals("12000")) {
 							
 							if(gotuser.getName().equals(username)){
+								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append("Moi ==> ");
 								chatmsg.append(reponseProtocol.get(1)+" ");
 								chatmsg.append("(Reçu par : ");
@@ -462,8 +486,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 									else
 										chatmsg.append(reponseProtocol.get(i)+", ");
 								}
-								chatmsg.append(")\n");
+								chatmsg.append(")\n\n");
 							} else if(!gotuser.getName().equals("")) {
+								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append(gotuser.getName()+" ==> ");
 								chatmsg.append(reponseProtocol.get(1)+" ");
 								chatmsg.append("(Reçu par : ");
@@ -473,7 +498,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 									else
 										chatmsg.append(reponseProtocol.get(i)+", ");
 								}
-								chatmsg.append(")\n");
+								chatmsg.append(")\n\n");
 							}
 							
 						} else if(reponseProtocol.get(0).equals("13000")) {
@@ -488,57 +513,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 						}
 					}
 					
-
-					
-					/*
-					
-					if(reponseProtocol.get(0) == "1000") {
-						output.println(reponseProtocol.get(0));
-					} else {
-						if(reponseProtocol.get(0) == "3000") {
-							if(reponseProtocol.size() > 1) {
-								chatmsg.append("Liste des utilisateur : ");
-								for(int i = 1; i < reponseProtocol.size(); i++) {
-									users.add(new Users(reponseProtocol.get(i)));
-									chatmsg.append(reponseProtocol.get(i)+" ");
-								}
-								chatmsg.append("\n");
-							}
-						} else if(reponseProtocol.get(0) == "4000") {
-							chatmsg.append(reponseProtocol.get(1)+"\n");
-							
-						} else if(reponseProtocol.get(0) == "6000") { //Un utilisateur déconnecté
-							chatmsg.append("Déconnection de "+ reponseProtocol.get(1) +"\n");
-							Users user = null;
-							for(Users u : users) {
-								if(u.getName().equals(reponseProtocol.get(1)))
-									user = u;
-							}
-							users.remove(user);
-						} else if(reponseProtocol.get(0) == "8000") { //Un utilisateur déconnecté
-							chatmsg.append("Connexion de "+ reponseProtocol.get(1) +"\n");
-							Users user = null;
-							for(Users u : users) {
-								if(u.getName().equals(reponseProtocol.get(1)))
-									user = u;
-							}
-							users.remove(user);
-						} else if(reponseProtocol.get(0) == "10000"){ //Status
-							chatmsg.append("Le statut de "+ reponseProtocol.get(1) +" est maintenant "+reponseProtocol.get(2)+"\n");
-							for(Users user : users) {
-								if(user.getName().equals(reponseProtocol.get(1))) {
-									user.setStatus(Integer.parseInt(reponseProtocol.get(2)));
-								}
-							}
-						}
-					}*/
-					//chatmsg.append(Line+"\n");
-					//pw.println(Line+"\n");
-					
-					/*System.out.println(users.size());
-					for(Users user : users) {
-						System.out.println("utilisateru -> " +user.getName());
-					}*/
 				}
 			}catch(Exception ex) {
 				if(users.remove(gotuser)) {
