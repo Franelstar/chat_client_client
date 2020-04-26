@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -27,8 +28,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	Car_protocol car_protocol;
 	
-	Vector<Users> users = new Vector<Users>();
-	Vector<Manageuser> clients = new Vector<Manageuser>();
+	ConcurrentLinkedQueue<Users> users = new ConcurrentLinkedQueue<Users>();
+	ConcurrentLinkedQueue<Manageuser> clients = new ConcurrentLinkedQueue<Manageuser>();
 	
 	public ClientTop(String uname, String servername) throws Exception{
 		super(uname);
@@ -151,8 +152,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 			        continue;
 			    }
 
-			    System.out.println( "interface " + cur.getName( ) );
-
 			    for ( final InterfaceAddress addr : cur.getInterfaceAddresses( ) )
 			    {
 			        final InetAddress inet_addr = addr.getAddress( );
@@ -162,22 +161,22 @@ public final class ClientTop extends JFrame implements ActionListener {
 			            continue;
 			        }
 			        ip = inet_addr.getHostAddress( );
-
-			        System.out.println(
-			            "  address: " + inet_addr.getHostAddress( ) +
-			            "/" + addr.getNetworkPrefixLength( )
-			        );
-
-			        System.out.println(
-			            "  broadcast address: " +
-			                addr.getBroadcast( ).getHostAddress( )
-			        );
 			    }
 			}
 		
+		ArrayList<String> temp = new ArrayList<>();
+		String tmp = "";
+		for(int j = 0; j < ip.length(); j++) {
+			if(ip.charAt(j) == '.') {
+				temp.add(tmp);
+				tmp = "";
+			}else{
+				tmp += ip.charAt(j);
+			}
+		}
+		ip = temp.get(0)+"."+temp.get(1)+"."+temp.get(2);
+		System.out.println(ip);
 		
-		String[] temp = ip.split(".");
-		ip = temp[0]+"."+temp[1]+"."+temp[2];
 		final int timeout = 200;
 		final ArrayList<Future<Boolean>> futures = new ArrayList<>();
 		int port = 1234;
@@ -389,15 +388,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 					if (gotuser != null && est_utilisateur(gotuser.getName())){
 												
 						if(reponseProtocol.get(0).equals("7000")) {
-							int index = -1;
-							for(Users user : users) {
-								if(user.getName().equals(gotuser.getName())) {
-									index = users.indexOf(user);
-								}
-							}
 							
-							if(index != -1) {
-								users.remove(index);
+							if(users.remove(gotuser)) {
 								clients.remove(this);
 								chatmsg.append(gotuser.getName() + " ==> Déconnecté\n");
 								socketClient.close();
@@ -535,17 +527,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 					}*/
 				}
 			}catch(Exception ex) {
-				int index2 = -1;
-				if(gotuser != null && !users.isEmpty()) {
-					for(Users user : users) {
-						if(user.getName().equals(gotuser.getName())) {
-							index2 = users.indexOf(user);
-						}
-					}
-				}
-				
-				if(index2 != -1) {
-					users.remove(index2);
+				if(users.remove(gotuser)) {
 					clients.remove(this);
 					chatmsg.append(gotuser.getName() + " ==> Déconnecté\n");
 					try {
@@ -555,6 +537,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 						e.printStackTrace();
 					}
 				}
+				
 				System.out.println(ex.getMessage());
 			}
 		}
