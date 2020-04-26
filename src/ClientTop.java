@@ -381,8 +381,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 					          System.out.println("Troisieme partie");
 					          System.out.println("On est connecté");
 					          output.println(car_protocol.broadcast_("Connexion réussie"));
-						 }
-					         
+						 }        
+					}
+					
+					if(gotuser.getName().equals("")) {
+						output.println("WHO");
 					}
 						
 					if (gotuser != null && est_utilisateur(gotuser.getName())){
@@ -425,6 +428,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 							if(gotuser != null && !gotuser.getName().equals("")) {
 								gotuser.setStatus(Integer.parseInt(reponseProtocol.get(1)));
 								chatmsg.append(gotuser.getName() + " ==> Nouveau status à " + reponseProtocol.get(1) + "\n");
+								
+								if(gotuser.getName().equals(username)) {
+									status = Integer.parseInt(reponseProtocol.get(1));
+								}
 							}
 						} else if(reponseProtocol.get(0).equals("10000")) { //USERS
 							if(reponseProtocol.size() == 1){
@@ -469,6 +476,13 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append(")\n");
 							}
 							
+						} else if(reponseProtocol.get(0).equals("13000")) {
+							System.out.println(Line);
+							output.println("ID "+username+" "+status);
+						} else if(reponseProtocol.get(0).equals("14000")) {
+							System.out.println(Line);
+							gotuser.setName(reponseProtocol.get(1));
+							gotuser.setStatus(Integer.parseInt(reponseProtocol.get(2)));
 						} else {
 							//chatmsg.append(reponseProtocol.get(0)+"\n");
 						}

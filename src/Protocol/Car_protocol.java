@@ -52,6 +52,12 @@ public class Car_protocol {
 			case "quit":
 				quit();
 				break;
+			case "who":
+				who();
+				break;
+			case "id":
+				id();
+				break;
 			default:
 				resultat_commande.add("ERREUR 1000");
 				break;
@@ -287,5 +293,42 @@ public class Car_protocol {
 	
 	public String status_(Users user, int status) {
 		return "STATUS " + user.getName() + " " + status;
+	}
+	
+	/**
+	 * COMMANDE WHO
+	 * Liste des utilisateurs de la messagerie
+	 * Code général 13000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void who() {
+		if(parts.length == 1) {
+			resultat_commande.add("13000");
+		} else {
+			resultat_commande.add("13001");
+		}
+	}
+	
+	/**
+	 * COMMANDE ID
+	 * Liste des utilisateurs de la messagerie
+	 * Code général 14000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void id() {
+		if(parts.length == 2) {
+			resultat_commande.add("14000");
+			resultat_commande.add(parts[1]);
+		} else if(parts.length == 3) {
+			resultat_commande.add("14000");
+			resultat_commande.add(parts[1]);
+			resultat_commande.add(parts[2]);
+		} else {
+			resultat_commande.add("140001");
+		}
 	}
 }
