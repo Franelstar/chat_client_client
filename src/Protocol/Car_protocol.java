@@ -28,44 +28,72 @@ public class Car_protocol {
 		parts = commande.trim().replaceAll(" {2,}", " ").split(" ");
 		
 		partsMessage = commande.trim().split("@@@");
-		partsSendto = commande.trim().split(" ");
+		partsSendto = commande.trim().split("@@@");
 		
 		resultat_commande = new ArrayList<String>();
 		
 		switch(parts[0].toLowerCase()) {
-			case "connect":
+			case "/connect":
 				connect();
 				break;
-			case "users":
+			case "/users":
 				users();
 				break;
-			case "sstatus":
+			case "/sstatus":
 				sstatus();
 				break;
-			case "status":
+			case "/status":
 				status();
 				break;
-			case "quit":
+			case "/quit":
 				quit();
 				break;
-			case "who":
+			case "/who":
 				who();
 				break;
-			case "id":
+			case "/id":
 				id();
+				break;
+			case "/group":
+				group();
+				break;
+			case "/quitgroup":
+				quitgroup();
+				break;
+			case "/addgroup":
+				addgroup();
+				break;
+			case "/listusersgroup":
+				listusersgroup();
+				break;
+			case "/usersgroup":
+				usersgroup();
+				break;
+			case "/groups":
+				groups();
+				break;
+			case "/delgroup":
+				delgroup();
+				break;
+			case "/":
+				aide();
 				break;
 			default:
 				resultat_commande.add("ERREUR 1000");
 				break;
 		}
 		
-		if(partsMessage[0].toLowerCase().equals("broadcast")) {
+		if(partsMessage[0].toLowerCase().equals("/broadcast")) {
 			resultat_commande = new ArrayList<String>();
 			broadcast();
 		}
-		if(partsSendto[0].toLowerCase().equals("sendto")) {
+		if(partsSendto[0].toLowerCase().equals("/sendto")) {
 			resultat_commande = new ArrayList<String>();
 			sendto();
+		}
+		if(partsSendto[0].toLowerCase().equals("/sendtogroup")) {
+			resultat_commande = new ArrayList<String>();
+			sendtogroup();
 		}
 		
 		return resultat_commande;
@@ -89,7 +117,7 @@ public class Car_protocol {
 	}
 	
 	public String connect_(String message) {
-		return "CONNECT " + message;
+		return "/CONNECT " + message;
 	}
 	
 	/**
@@ -128,7 +156,7 @@ public class Car_protocol {
 		}
 	}
 	public String broadcast_(String message) {
-		return "BROADCAST@@@" + message;
+		return "/BROADCAST@@@" + message;
 	}
 	
 	/**
@@ -139,26 +167,21 @@ public class Car_protocol {
 	 * @return
 	 */
 	public void sendto() {
-		if(partsSendto.length != 2) {
+		if(partsSendto.length != 3) {
 			resultat_commande.add("ERREUR 12001");
 		}else{
-			String[] mesetuti;
-			mesetuti = partsSendto[1].trim().split("@@@");
-			
-			if(mesetuti.length != 2) {
-				resultat_commande.add("ERREUR 12002");
-			} else {
-				String message = mesetuti[1];
-				String[] dest = mesetuti[0].split("@@");
-				System.out.println(dest.length);
-				resultat_commande.add("12000");
-				resultat_commande.add(message);
-				for(int i = 0; i < dest.length; i++) {
-					resultat_commande.add(dest[i]);
-					System.out.println(dest[i]);
-				}
+			String message = partsSendto[2];
+			String[] dest = partsSendto[1].split("@@");
+			resultat_commande.add("12000");
+			resultat_commande.add(message);
+			for(int i = 0; i < dest.length; i++) {
+				resultat_commande.add(dest[i]);
 			}
 		}
+	}
+	
+	public String sendto_(String message, String user) {
+		return "/SENDTO@@@"+user+"@@@"+message;
 	}
 	
 	/*public String sendto_(String message) {
@@ -178,7 +201,7 @@ public class Car_protocol {
 	}
 	
 	public String quit_() {
-		return "QUIT";
+		return "/QUIT";
 	}
 	
 	/**
@@ -202,7 +225,7 @@ public class Car_protocol {
 		}
 	}
 	public String sstatus_(int status) {
-		return "SSTATUS " + status;
+		return "/SSTATUS " + status;
 	}
 	
 	/**
@@ -225,7 +248,7 @@ public class Car_protocol {
 	}
 	
 	public String status_(Users user, int status) {
-		return "STATUS " + user.getName() + " " + status;
+		return "/STATUS " + user.getName() + " " + status;
 	}
 	
 	/**
@@ -262,6 +285,165 @@ public class Car_protocol {
 			resultat_commande.add(parts[2]);
 		} else {
 			resultat_commande.add("140001");
+		}
+	}
+	
+	/**
+	 * COMMANDE GROUP
+	 * Code général 15000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void group() {
+		if(parts.length != 3) {
+			resultat_commande.add("ERREUR 15001");
+		}else{
+			String nom_group = parts[1];
+			String[] dest = parts[2].split("@@");
+			resultat_commande.add("15000");
+			resultat_commande.add(nom_group);
+			for(int i = 0; i < dest.length; i++) {
+				resultat_commande.add(dest[i]);
+			}
+		}
+	}
+	
+	/**
+	 * COMMANDE QUITGROUP
+	 * Code général 15000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void quitgroup() {
+		if(parts.length != 3) {
+			resultat_commande.add("ERREUR 16001");
+		}else{
+			String nom_group = parts[1];
+			resultat_commande.add("16000");
+			resultat_commande.add(nom_group);
+			resultat_commande.add(parts[2]);
+		}
+	}
+	
+	/**
+	 * COMMANDE ADDGROUP
+	 * Code général 17000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void addgroup() {
+		if(parts.length != 3) {
+			resultat_commande.add("ERREUR 17001");
+		}else{
+			String nom_group = parts[1];
+			resultat_commande.add("17000");
+			resultat_commande.add(nom_group);
+			resultat_commande.add(parts[2]);
+		}
+	}
+	
+	/**
+	 * COMMANDE LISTUSERSGROUP
+	 * Code général 18000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void listusersgroup() {
+		if(parts.length != 2) {
+			resultat_commande.add("ERREUR 18001");
+		}else{
+			String nom_group = parts[1];
+			resultat_commande.add("18000");
+			resultat_commande.add(nom_group);
+		}
+	}
+	
+	/**
+	 * COMMANDE USERSGROUP
+	 * Code général 19000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void usersgroup() {
+		if(parts.length != 3) {
+			resultat_commande.add("ERREUR 19001");
+		}else{
+			String nom_group = parts[1];
+			String[] dest = parts[2].split("@@");
+			resultat_commande.add("19000");
+			resultat_commande.add(nom_group);
+			for(int i = 0; i < dest.length; i++) {
+				resultat_commande.add(dest[i]);
+			}
+		}
+	}
+	
+	/**
+	 * COMMANDE GROUPS
+	 * Code général 20000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void groups() {
+		if(parts.length != 1) {
+			resultat_commande.add("ERREUR 20001");
+		}else{
+			resultat_commande.add("20000");
+		}
+	}
+	
+	/**
+	 * COMMANDE DELGROUP
+	 * Code général 21000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void delgroup() {
+		if(parts.length != 2) {
+			resultat_commande.add("ERREUR 21001");
+		}else{
+			resultat_commande.add("21000");
+			resultat_commande.add(parts[1]);
+		}
+	}
+	
+	/**
+	 * COMMANDE SENDTOGROUP
+	 * Code général 22000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void sendtogroup() {
+		if(partsSendto.length != 3) {
+			resultat_commande.add("ERREUR 22001");
+		}else{
+			String message = partsSendto[2];
+			resultat_commande.add("22000");
+			resultat_commande.add(partsSendto[1]);
+			resultat_commande.add(message);
+		}
+	}
+	
+	/**
+	 * COMMANDE aide
+	 * Code général 23000
+	 * 
+	 * @param list_users
+	 * @return
+	 */
+	public void aide() {
+		if(partsSendto.length != 1) {
+			resultat_commande.add("ERREUR 23001");
+		}else{
+			resultat_commande.add("23000");
 		}
 	}
 }

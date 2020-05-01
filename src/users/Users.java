@@ -56,4 +56,8 @@ public class Users {
 	public int getPort() {
 		return port;
 	}
+	
+	public String toString(){
+		return name;
+	}
 }
