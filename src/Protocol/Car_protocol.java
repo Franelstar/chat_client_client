@@ -100,39 +100,34 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE CONNECT
-	 * Code général 2000
+	 * Interprétation de la commande CONNECT
+	 * Code général 200-209
 	 */
 	public void connect() {
 		if(parts.length == 2) {
-			resultat_commande.add("2000");
+			resultat_commande.add("200");
 			resultat_commande.add(parts[1]);
 		} else if(parts.length == 3) {
-			resultat_commande.add("2000");
+			resultat_commande.add("200");
 			resultat_commande.add(parts[1]);
 			resultat_commande.add(parts[2]);
 		} else {
-			resultat_commande.add("2001");
+			resultat_commande.add("E201");
 		}
 	}
 	
-	public String connect_(String message) {
-		return "/CONNECT " + message;
-	}
-	
 	/**
-	 * COMMANDE USERS
-	 * Affiche la Liste des utilisateurs connectés
-	 * Code général 3000
+	 * Interprétation de la commande USERS
+	 * Code général 260-269
 	 * 
 	 * @param list_users
 	 * @return
 	 */
 	public void users() {
 		if(parts.length == 1) {
-			resultat_commande.add("3000");
+			resultat_commande.add("260");
 		} else {
-			resultat_commande.add("3000");
+			resultat_commande.add("260");
 			for(int i = 1; i < parts.length; i++) {
 				resultat_commande.add(parts[i]);
 			}
@@ -140,39 +135,34 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE MESSAGE
-	 * Code général 4000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande BROADCAST
+	 * Code général 400-409
 	 */
 	public void broadcast() {
 		if(partsMessage.length < 2) {
-			resultat_commande.add("ERREUR 4001");
+			resultat_commande.add("E401");
 		}else{
-			resultat_commande.add("4000");
+			resultat_commande.add("400");
 			for(int i = 0; i < partsMessage.length; i++)
 				resultat_commande.add(partsMessage[1]);
 		}
 	}
+	
 	public String broadcast_(String message) {
 		return "/BROADCAST@@@" + message;
 	}
 	
 	/**
-	 * COMMANDE MESSAGE
-	 * Code général 12000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande MESSAGE
+	 * Code général 410-419
 	 */
 	public void sendto() {
 		if(partsSendto.length != 3) {
-			resultat_commande.add("ERREUR 12001");
+			resultat_commande.add("E411");
 		}else{
 			String message = partsSendto[2];
 			String[] dest = partsSendto[1].split("@@");
-			resultat_commande.add("12000");
+			resultat_commande.add("410");
 			resultat_commande.add(message);
 			for(int i = 0; i < dest.length; i++) {
 				resultat_commande.add(dest[i]);
@@ -184,19 +174,15 @@ public class Car_protocol {
 		return "/SENDTO@@@"+user+"@@@"+message;
 	}
 	
-	/*public String sendto_(String message) {
-		return "SENDTO@@@" + message;
-	}*/
-	
 	/**
-	 * COMMANDE QUIT
-	 * Code général 7000
+	 * Interprétation de la commande QUIT
+	 * Code général 210-219
 	 */
 	public void quit() {
 		if(parts.length != 1) {
-			resultat_commande.add("ERREUR 7001");
+			resultat_commande.add("E211");
 		}else{
-			resultat_commande.add("7000");
+			resultat_commande.add("210");
 		}
 	}
 	
@@ -205,42 +191,35 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE SSTATUS
-	 * Liste des utilisateurs de la messagerie
-	 * Code général 9000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande SSTATUS
+	 * Code général 240-249
 	 */
 	public void sstatus() {
 		if(parts.length != 2) {
-			resultat_commande.add("ERREUR 9001");
+			resultat_commande.add("E241");
 		}else{
 			if(parts[1].equals("1") || parts[1].equals("2") || parts[1].equals("3")) {
-				resultat_commande.add("9000");
+				resultat_commande.add("240");
 				resultat_commande.add(parts[1]);
 			} else {
-				resultat_commande.add("ERREUR 9002");
+				resultat_commande.add("E242");
 			}
 		}
 	}
+	
 	public String sstatus_(int status) {
 		return "/SSTATUS " + status;
 	}
 	
 	/**
-	 * COMMANDE STATUS
-	 * Liste des utilisateurs de la messagerie
-	 * Code général 10000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande  STATUS
+	 * Code général 250-259
 	 */
 	public void status() {
 		if(parts.length == 1) {
-			resultat_commande.add("10000");
+			resultat_commande.add("250");
 		} else {
-			resultat_commande.add("10000");
+			resultat_commande.add("250");
 			for(int i = 1; i < parts.length; i++) {
 				resultat_commande.add(parts[i]);
 			}
@@ -252,56 +231,49 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE WHO
-	 * Liste des utilisateurs de la messagerie
-	 * Code général 13000
 	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande WHO
+	 * Code général 220-229
+	 * 
 	 */
 	public void who() {
 		if(parts.length == 1) {
-			resultat_commande.add("13000");
+			resultat_commande.add("220");
 		} else {
-			resultat_commande.add("13001");
+			resultat_commande.add("E221");
 		}
 	}
 	
 	/**
-	 * COMMANDE ID
-	 * Liste des utilisateurs de la messagerie
-	 * Code général 14000
 	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande ID
+	 * Code général 230-239
+	 * 
 	 */
 	public void id() {
 		if(parts.length == 2) {
-			resultat_commande.add("14000");
+			resultat_commande.add("230");
 			resultat_commande.add(parts[1]);
 		} else if(parts.length == 3) {
-			resultat_commande.add("14000");
+			resultat_commande.add("230");
 			resultat_commande.add(parts[1]);
 			resultat_commande.add(parts[2]);
 		} else {
-			resultat_commande.add("140001");
+			resultat_commande.add("E231");
 		}
 	}
 	
 	/**
-	 * COMMANDE GROUP
-	 * Code général 15000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande GROUP
+	 * Code général 300-309
 	 */
 	public void group() {
 		if(parts.length != 3) {
-			resultat_commande.add("ERREUR 15001");
+			resultat_commande.add("E301");
 		}else{
 			String nom_group = parts[1];
 			String[] dest = parts[2].split("@@");
-			resultat_commande.add("15000");
+			resultat_commande.add("300");
 			resultat_commande.add(nom_group);
 			for(int i = 0; i < dest.length; i++) {
 				resultat_commande.add(dest[i]);
@@ -310,72 +282,61 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE QUITGROUP
-	 * Code général 15000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande QUITGROUP
+	 * Code général 310-319
 	 */
 	public void quitgroup() {
 		if(parts.length != 3) {
-			resultat_commande.add("ERREUR 16001");
+			resultat_commande.add("E311");
 		}else{
 			String nom_group = parts[1];
-			resultat_commande.add("16000");
+			resultat_commande.add("310");
 			resultat_commande.add(nom_group);
 			resultat_commande.add(parts[2]);
 		}
 	}
 	
 	/**
-	 * COMMANDE ADDGROUP
-	 * Code général 17000
+	 * Interprétation de la commande ADDGROUP
+	 * Code général 320-329
 	 * 
-	 * @param list_users
-	 * @return
 	 */
 	public void addgroup() {
 		if(parts.length != 3) {
-			resultat_commande.add("ERREUR 17001");
+			resultat_commande.add("E321");
 		}else{
 			String nom_group = parts[1];
-			resultat_commande.add("17000");
+			resultat_commande.add("320");
 			resultat_commande.add(nom_group);
 			resultat_commande.add(parts[2]);
 		}
 	}
 	
 	/**
-	 * COMMANDE LISTUSERSGROUP
-	 * Code général 18000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande LISTUSERSGROUP
+	 * Code général 330-339
 	 */
 	public void listusersgroup() {
 		if(parts.length != 2) {
-			resultat_commande.add("ERREUR 18001");
+			resultat_commande.add("E331");
 		}else{
 			String nom_group = parts[1];
-			resultat_commande.add("18000");
+			resultat_commande.add("330");
 			resultat_commande.add(nom_group);
 		}
 	}
 	
 	/**
-	 * COMMANDE USERSGROUP
-	 * Code général 19000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande USERSGROUP
+	 * Code général 340-349
 	 */
 	public void usersgroup() {
 		if(parts.length != 3) {
-			resultat_commande.add("ERREUR 19001");
+			resultat_commande.add("E341");
 		}else{
 			String nom_group = parts[1];
 			String[] dest = parts[2].split("@@");
-			resultat_commande.add("19000");
+			resultat_commande.add("340");
 			resultat_commande.add(nom_group);
 			for(int i = 0; i < dest.length; i++) {
 				resultat_commande.add(dest[i]);
@@ -384,49 +345,40 @@ public class Car_protocol {
 	}
 	
 	/**
-	 * COMMANDE GROUPS
-	 * Code général 20000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande GROUPS
+	 * Code général 350-359
 	 */
 	public void groups() {
 		if(parts.length != 1) {
-			resultat_commande.add("ERREUR 20001");
+			resultat_commande.add("E351");
 		}else{
-			resultat_commande.add("20000");
+			resultat_commande.add("350");
 		}
 	}
 	
 	/**
-	 * COMMANDE DELGROUP
-	 * Code général 21000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande DELGROUP
+	 * Code général 360-369
 	 */
 	public void delgroup() {
 		if(parts.length != 2) {
-			resultat_commande.add("ERREUR 21001");
+			resultat_commande.add("E361");
 		}else{
-			resultat_commande.add("21000");
+			resultat_commande.add("360");
 			resultat_commande.add(parts[1]);
 		}
 	}
 	
 	/**
-	 * COMMANDE SENDTOGROUP
-	 * Code général 22000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Interprétation de la commande SENDTOGROUP
+	 * Code général 420-429
 	 */
 	public void sendtogroup() {
 		if(partsSendto.length != 3) {
-			resultat_commande.add("ERREUR 22001");
+			resultat_commande.add("E421");
 		}else{
 			String message = partsSendto[2];
-			resultat_commande.add("22000");
+			resultat_commande.add("420");
 			resultat_commande.add(partsSendto[1]);
 			resultat_commande.add(message);
 		}
@@ -434,16 +386,13 @@ public class Car_protocol {
 	
 	/**
 	 * COMMANDE aide
-	 * Code général 23000
-	 * 
-	 * @param list_users
-	 * @return
+	 * Code général 900
 	 */
 	public void aide() {
 		if(partsSendto.length != 1) {
-			resultat_commande.add("ERREUR 23001");
+			resultat_commande.add("E901");
 		}else{
-			resultat_commande.add("23000");
+			resultat_commande.add("900");
 		}
 	}
 }

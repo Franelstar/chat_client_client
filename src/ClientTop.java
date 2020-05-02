@@ -127,15 +127,15 @@ public final class ClientTop extends JFrame implements ActionListener {
 			//pw.println(car_protocol.quit_());
 			System.exit(0);
 		} else if(evt.getSource() == send_commande) {
-			if(chatip_commande.getText().toLowerCase().equals("/status") || 
+			if(chatip_commande.getText().toLowerCase().contains("/status") || 
 					chatip_commande.getText().toLowerCase().contains("/users") || 
-					chatip_commande.getText().toLowerCase().contains("/groups") ||
-					chatip_commande.getText().toLowerCase().contains("/delgroup")) {
+					chatip_commande.getText().toLowerCase().contains("/groups")) {
 				sendtome(chatip_commande.getText());
 			} else if(chatip_commande.getText().toLowerCase().contains("/sendto") || 
 					chatip_commande.getText().toLowerCase().contains("/quitgroup") || 
 					chatip_commande.getText().toLowerCase().contains("/addgroup") || 
-					chatip_commande.getText().toLowerCase().contains("/sendtogroup")){
+					chatip_commande.getText().toLowerCase().contains("/sendtogroup") ||
+					chatip_commande.getText().toLowerCase().contains("/delgroup")){
 				sendtoothers(chatip_commande.getText());
 			} else if(chatip_commande.getText().toLowerCase().contains("/group")){
 				sendtoothers(chatip_commande.getText()+"@@"+username);
@@ -301,7 +301,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	public void sendtouser(String message, String user) {
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		for(Manageuser c : clients) {
-			if((c.getchatuser() != null && c.getchatuser().equals(user)) || (c.getchatuser() != null && c.getchatuser().equals(username))) {
+			if((c.getchatuser() != null && c.getchatuser().getName().equals(user)) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
 				if(!envoye.contains(c.getchatuser())){
 					c.sendMessage(message);
 					envoye.add(c.getchatuser());
@@ -322,7 +322,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	public void sendtoothers(String message) {
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		ArrayList<String> reponseProtocol = car_protocol.requete(message);
-		if(reponseProtocol.get(0) == "12000" || reponseProtocol.get(0) == "15000") {
+		if(reponseProtocol.get(0) == "410" || reponseProtocol.get(0) == "300") {
 			for(int i = 2; i < reponseProtocol.size(); i++) {
 				for(Manageuser c : clients) {
 					if((c.getchatuser() != null && c.getchatuser().getName().equals(reponseProtocol.get(i))) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
@@ -333,7 +333,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 					}
 				}
 			}
-		} else if(reponseProtocol.get(0) == "16000" || reponseProtocol.get(0) == "17000" || reponseProtocol.get(0) == "22000") {
+		} else if(reponseProtocol.get(0) == "310" || reponseProtocol.get(0) == "320" || reponseProtocol.get(0) == "420" || reponseProtocol.get(0) == "360") {
 			//On recupère le groupe
 			Group g = null;
 			for(Group grou : groups) {
@@ -342,7 +342,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 			}
 			
 			if(g != null) {
-				if(reponseProtocol.get(0) == "22000") {
+				if(reponseProtocol.get(0) == "420" || reponseProtocol.get(0) == "360") {
 					for(Users user : g.listeUsers()) {
 						for(Manageuser c : clients) {
 							if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
@@ -353,7 +353,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 							}
 						}
 					}
-				} else if(reponseProtocol.get(0) == "16000") {
+				} else if(reponseProtocol.get(0) == "310") {
 					//On verifie si l'utilisaeur qu'on veut enlever est dans le groupe
 					Users u = null;
 					for(Users user : g.listeUsers()) {
@@ -376,8 +376,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 						chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 						chatmsg.append("L'utilisateur que vous avez utilisé n'existe pas\n\n");
 					}
-				} else if(reponseProtocol.get(0) == "17000") {
-					//On verifie si l'utilisaeur qu'on veut enlever existe
+				} else if(reponseProtocol.get(0) == "320") {
+					//On verifie si l'utilisaeur qu'on veut ajouter existe
 					Users u = null;
 					for(Users user : users) {
 						if(user.getName().equals(reponseProtocol.get(2)))
@@ -395,7 +395,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 						if(!est_deja_dant_groupe) {
 							for(Users user : g.listeUsers()) {
 								for(Manageuser c : clients) {
-									if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
+									if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username)) || (c.getchatuser() != null && c.getchatuser().getName().equals(u.getName()))) {
 										if(!envoye.contains(c.getchatuser())){
 											c.sendMessage(message);
 											envoye.add(c.getchatuser());
@@ -464,6 +464,26 @@ public final class ClientTop extends JFrame implements ActionListener {
 			}
 		}
 		
+		protected void miseAJour() {
+			
+			ArrayList<Users> envoye = new ArrayList<Users>();
+			int selectionne = listeUsers.getSelectedIndex();
+			oldusers.clear();
+			oldusers.add(new Users("0.0.0.0", "All Users"));
+			for(Users user : users) {
+				if(!user.getName().equals(username) && !user.getName().equals("")) {
+					if(!envoye.contains(user)){
+						oldusers.add(user);
+						envoye.add(user);
+					}
+				}
+			}
+			if(selectionne >= 0)
+				listeUsers.setSelectedIndex(selectionne);
+			else
+				listeUsers.setSelectedIndex(0);
+		}
+		
 		public Users getchatuser() {
 			return gotuser;
 		}
@@ -474,12 +494,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 			try {
 				while(true) {
 					Line = input.readLine();
-					//System.out.println(Line);
+					System.out.println(Line);
 					ArrayList<String> reponseProtocol = car_protocol.requete(Line);
 					//output.println(Line+"\n");
 					
 					if(!est_utilisateurIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15)) && gotuser == null) {
-						 if(reponseProtocol.get(0) == "2000" && !est_utilisateur(reponseProtocol.get(1))) {
+						 if(reponseProtocol.get(0) == "200" && !est_utilisateur(reponseProtocol.get(1))) {
 				        	  gotuser = new Users(socketClient.getRemoteSocketAddress().toString().substring(1, 15), reponseProtocol.get(1), 
 				        			  socketClient.getLocalPort(), 1);
 				        	  if(reponseProtocol.size() == 3) {
@@ -500,7 +520,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 				          }
 					} else if(est_utilisateurIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15))) {
 						
-						if(reponseProtocol.get(0) == "2000" && !est_utilisateur(reponseProtocol.get(1))) {
+						if(reponseProtocol.get(0) == "200" && !est_utilisateur(reponseProtocol.get(1))) {
 							gotuser = getUserIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15));
 				        	 
 							gotuser.setName(reponseProtocol.get(1));
@@ -514,22 +534,19 @@ public final class ClientTop extends JFrame implements ActionListener {
 					          output.println(car_protocol.broadcast_("Connexion réussie"));
 						 }        
 					}
-					
-					if(gotuser.getName().equals("")) {
-						output.println("/WHO");
-					}
 						
 					if (gotuser != null && est_utilisateur(gotuser.getName())){
 												
-						if(reponseProtocol.get(0).equals("7000")) {
+						if(reponseProtocol.get(0).equals("210")) {
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n\n");
-							if(users.remove(gotuser)) {
+							if(users.remove(gotuser) && !gotuser.getName().equals("")) {
 								clients.remove(this);
+								
 								chatmsg.append(gotuser.getName() + " ==> Déconnecté\n\n");
 								socketClient.close();
 							}
 							
-						} else if(reponseProtocol.get(0).equals("4000")) {
+						} else if(reponseProtocol.get(0).equals("400")) {
 							if(gotuser.getName().equals(username)){
 								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append("Moi ==> ");
@@ -539,7 +556,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append(gotuser.getName()+" ==> ");
 								chatmsg.append(reponseProtocol.get(1)+" (Broadcast)\n\n");
 							}
-						} else if(reponseProtocol.get(0).equals("3000")) { //USERS
+						} else if(reponseProtocol.get(0).equals("260")) { //USERS
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							if(reponseProtocol.size() == 1){
 								chatmsg.append("Liste des utilisateurs connectés :\n");
@@ -559,7 +576,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								}
 								chatmsg.append("\n");
 							}
-						} else if(reponseProtocol.get(0).equals("9000")) {
+						} else if(reponseProtocol.get(0).equals("240")) {
 							if(gotuser != null && !gotuser.getName().equals("")) {
 								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								gotuser.setStatus(Integer.parseInt(reponseProtocol.get(1)));
@@ -569,7 +586,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 									status = Integer.parseInt(reponseProtocol.get(1));
 								}
 							}
-						} else if(reponseProtocol.get(0).equals("10000")) { //USERS
+						} else if(reponseProtocol.get(0).equals("250")) { //USERS
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							if(reponseProtocol.size() == 1){
 								chatmsg.append("Status des utilisateurs connectés :\n");
@@ -589,7 +606,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								}
 								chatmsg.append("\n");
 							}
-						} else if(reponseProtocol.get(0).equals("12000")) {
+						} else if(reponseProtocol.get(0).equals("410")) {
 							
 							if(gotuser.getName().equals(username)){
 								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
@@ -617,17 +634,17 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append(")\n\n");
 							}
 							
-						} else if(reponseProtocol.get(0).equals("13000")) {
+						} else if(reponseProtocol.get(0).equals("220")) {
 							System.out.println(Line);
 							output.println("/ID "+username+" "+status);
-						} else if(reponseProtocol.get(0).equals("14000")) {
+						} else if(reponseProtocol.get(0).equals("230")) {
 							if(gotuser.getName().equals("")) {
 								System.out.println(Line);
 								gotuser.setName(reponseProtocol.get(1));
 								gotuser.setStatus(Integer.parseInt(reponseProtocol.get(2)));
 								output.println(car_protocol.broadcast_("Connexion réussie"));
 							}
-						} else if(reponseProtocol.get(0).equals("15000") || reponseProtocol.get(0).equals("19000")) { //création groupe
+						} else if(reponseProtocol.get(0).equals("300") || reponseProtocol.get(0).equals("340")) { //création groupe
 							//On verifie que aucun groupe ne porte ce nom
 							Boolean trouve = false;
 							for(Group gou : groups) {
@@ -660,7 +677,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append("\n\n");
 							}
 							
-						} else if(reponseProtocol.get(0) == "16000") {
+						} else if(reponseProtocol.get(0) == "310") {
 							//On recupère le groupe
 							Group g = null;
 							for(Group grou : groups) {
@@ -681,13 +698,14 @@ public final class ClientTop extends JFrame implements ActionListener {
 									g.listeUsers().remove(u);
 									chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 									if(u.getName().equals(username)){
+										groups.remove(g);
 										chatmsg.append("Vous avez été supprimé du groupe " + g.getNomGroup() + "\n\n");
 									} else {
-										chatmsg.append(u.getName() + "a été supprimé du groupe " + g.getNomGroup() + "\n\n");
+										chatmsg.append(u.getName() + " a été supprimé du groupe " + g.getNomGroup() + "\n\n");
 									}
 								}
 							}
-						} else if(reponseProtocol.get(0) == "17000") {
+						} else if(reponseProtocol.get(0) == "320") {
 							//On recupère le groupe
 							Group g = null;
 							for(Group grou : groups) {
@@ -713,7 +731,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 							} else if(username.equals(reponseProtocol.get(2))) { //l'utilisateur n'est pas encore dans le groupe, on créé le groupe parce que c'est lui quon veut ajouter
 								output.println("/LISTUSERSGROUP "+reponseProtocol.get(1));
 							}
-						} else if(reponseProtocol.get(0) == "18000"){
+						} else if(reponseProtocol.get(0) == "330"){
 							//On recupère le groupe
 							Group g = null;
 							for(Group grou : groups) {
@@ -729,7 +747,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								output.println(membregroup);
 							}
 							
-						} else if(reponseProtocol.get(0) == "20000") {
+						} else if(reponseProtocol.get(0) == "350") {
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							if(groups.size() != 0){
 								chatmsg.append("Liste des groupes auxquels vous appartenez :\n");
@@ -745,7 +763,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 							} else {
 								chatmsg.append("Vous n'appartenez à aucun groupe \n\n");
 							}
-						} else if(reponseProtocol.get(0) == "21000") {
+						} else if(reponseProtocol.get(0) == "360") {
 							//On verifie que aucun groupe ne porte ce nom
 							Group g = null;
 							for(Group gou : groups) {
@@ -757,7 +775,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 								chatmsg.append("Le groupe " + reponseProtocol.get(1) + " a été supprimé \n\n");
 							}
-						} else if(reponseProtocol.get(0).equals("22000")) {
+						} else if(reponseProtocol.get(0).equals("420")) {
 							
 							//On verifie que aucun groupe ne porte ce nom
 							Group g = null;
@@ -777,7 +795,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append("\n\n");
 							}
 							
-						} else if(reponseProtocol.get(0).equals("23000")) {
+						} else if(reponseProtocol.get(0).equals("900")) {
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							chatmsg.append("---------- APPLICATION DE TCHAT AVEC LE PROTOCOLE CAR");
 						}else {
@@ -785,16 +803,17 @@ public final class ClientTop extends JFrame implements ActionListener {
 						}
 					}
 					
-					oldusers.clear();
-					oldusers.add(new Users("0.0.0.0", "All Users"));
-					for(Users user : users) {
-						if(!user.getName().equals(username))
-							oldusers.add(user);
+					
+					if(gotuser.getName().equals("")) {
+						output.println("/WHO");
 					}
-					listeUsers.setSelectedIndex(0);
+					
+					//On met à jour la liste
+					miseAJour();
+					//Fin mise à jour de la liste
 				}
 			}catch(Exception ex) {
-				if(users.remove(gotuser)) {
+				if(users.remove(gotuser) && !gotuser.getName().equals("")) {
 					clients.remove(this);
 					chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 					chatmsg.append(gotuser.getName() + " ==> Déconnecté\n\n");
