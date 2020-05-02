@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -47,10 +46,13 @@ public final class ClientTop extends JFrame implements ActionListener {
 	Vector<Group> groups = new Vector<Group>();
 	Vector<Manageuser> clients = new Vector<Manageuser>();
 	
+	/**
+	 * Constructeur
+	 * @param uname (Nom d'utilisateur)
+	 * @throws Exception
+	 */
 	public ClientTop(String uname) throws Exception{
 		super(uname);
-		
-		// On cherche la liste des personnes disponibles
 		
 		rechercheConnecte();
 		car_protocol = new Car_protocol();
@@ -58,7 +60,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 			
 		
 		ServerSocket server = new ServerSocket(1234, 10);
-		buildInterface();
+		buildInterface(); //On construit l'interface graphique
 		
 		while(true) {
 			Socket client = server.accept();
@@ -68,6 +70,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction permettant de construire l'interface graphique
+	 */
 	public void buildInterface() {
 		send = new JButton("Envoyer");
 		send_commande = new JButton("Valider");
@@ -112,6 +117,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 		pack();
 	}
 	
+	/**
+	 * Fonction permettant de gérer les interactions avec les différents boutons de l'interface graphique
+	 */
 	//@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource() == exit) {
@@ -156,6 +164,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction d'entrée de l'application
+	 * @param args
+	 */
 	public static void main(String ... args) {
 		String SetUserName = JOptionPane.showInputDialog(null, "SVP Entrez votre nom :",
 				"CONNEXION TO CHAT", JOptionPane.PLAIN_MESSAGE);
@@ -169,6 +181,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction permettant de rechercher les personnes connectées sur le réseau
+	 * @throws IOException
+	 */
 	public void rechercheConnecte() throws IOException {
 		final ExecutorService es = Executors.newFixedThreadPool(20);
 		
@@ -222,6 +238,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 		es.shutdown();
 	}
 	
+	/**
+	 * Fonction permettant de savoir si un utilisateur est dans le réseau
+	 * @param nom
+	 * @return
+	 */
 	public Boolean est_utilisateur(String nom) {
 		for(Users user : users) {
 			if(user.getName().equals(nom)){
@@ -232,6 +253,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 		return false;
 	}
 	
+	/**
+	 * Fonction permettant de savoir si une adresse IP est dans le réseau
+	 * @param ip
+	 * @return
+	 */
 	public Boolean est_utilisateurIP(String ip) {
 		for(Users user : users) {
 			if(user.getIP().equals(ip))
@@ -241,6 +267,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 		return false;
 	}
 	
+	/**
+	 * Fonction permettant de retourner un utilisateur à partir de son nom
+	 * @param nom
+	 * @return
+	 */
 	public Users getUser(String nom) {
 		for(Users user : users) {
 			if(user.getName().equals(nom))
@@ -249,6 +280,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 		return null;
 	}
 	
+	/**
+	 * Fonction permettant de retourner un utilisateur à partir de son adresse IP
+	 * @param ip
+	 * @return
+	 */
 	public Users getUserIP(String ip) {
 		for(Users user : users) {
 			if(user.getIP().equals(ip))
@@ -257,6 +293,14 @@ public final class ClientTop extends JFrame implements ActionListener {
 		return null;
 	}
 	
+	/**
+	 * Fonction permettant de snifer le réseau pour rechercher les serveurs connecté sur le port 1234
+	 * @param es
+	 * @param ip
+	 * @param port
+	 * @param timeout
+	 * @return
+	 */
 	public Future<Boolean> portIsOpen(final ExecutorService es, final String ip, final int port, final int timeout) {
 		return es.submit(new Callable<Boolean>() {
 	      @Override public Boolean call() {
@@ -276,6 +320,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 		});
 	}
 	
+	/**
+	 * Fonction permettant d'envoyer un message à des utilisateurs du réseau
+	 * @param user
+	 * @param message
+	 */
 	public void sendtoall(Users user, String message) {
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		for(Manageuser c : clients) {
@@ -286,6 +335,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction permettant d'envoyer un message à tous les utilisateurs du réseau
+	 * @param message
+	 */
 	public void sendtoall(String message) {
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		for(Manageuser c : clients) {
@@ -296,6 +349,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/*
+	 * Fonction permettant d'envoyer un message à une utilisateur du réseau
+	 */
 	public void sendtouser(String message, String user) {
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		for(Manageuser c : clients) {
@@ -308,6 +364,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction permettant d'exécuter les commandes qui n'ont pas besoin de faire intervenir les autres utilisateurs
+	 * @param message
+	 */
 	public void sendtome(String message) {
 		for(Manageuser c : clients) {
 			if(c.getchatuser() != null && c.getchatuser().getName().equals(username)) {
@@ -317,6 +377,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Fonction permettant de gérer les commandes qui n'ont pas été implémenté graphiquement
+	 * @param message
+	 */
 	public void sendtoothers(String message) {
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
@@ -419,6 +483,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Classe représentant un socket dans le système
+	 *
+	 */
 	class Manageuser extends Thread{
 		
 		Users gotuser = null;
@@ -426,6 +494,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 		PrintWriter output;
 		Socket socketClient;
 		
+		/**
+		 * Constructeur
+		 * @param client
+		 * @param u
+		 * @throws Exception
+		 */
 		public Manageuser(Socket client, Users u) throws Exception{
 			input = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			output = new PrintWriter(client.getOutputStream(), true);
@@ -438,6 +512,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 			start();
 		}
 		
+		/**
+		 * Constructeur
+		 * @param client
+		 * @param contact
+		 * @throws Exception
+		 */
 		public Manageuser(Socket client, Boolean contact) throws Exception{
 			input = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			output = new PrintWriter(client.getOutputStream(), true);
@@ -454,27 +534,39 @@ public final class ClientTop extends JFrame implements ActionListener {
 			start();
 		}
 		
+		/**
+		 * Fonction permettant d'envoyer un message à un utilisateur
+		 * @param chatuser
+		 * @param chatmsg
+		 */
 		public void sendMessage(String chatuser, String chatmsg) {
 			output.println(chatmsg);
 		}
 		
+		/**
+		 * Fonction permettant d'envoyer un message à tous les utilisateur
+		 * @param chatmsg
+		 */
 		public void sendMessage(String chatmsg) {
 			if(!gotuser.getName().equals("")) {
 				output.println(chatmsg);
 			}
 		}
 		
+		/**
+		 * Fonction premettant de mettre à jour la liste des utilisateurs sur l'interface graphique
+		 */
 		protected void miseAJour() {
 			
-			ArrayList<Users> envoye = new ArrayList<Users>();
+			ArrayList<String> envoye = new ArrayList<String>();
 			int selectionne = listeUsers.getSelectedIndex();
 			oldusers.clear();
 			oldusers.add(new Users("0.0.0.0", "All Users"));
 			for(Users user : users) {
 				if(!user.getName().equals(username) && !user.getName().equals("")) {
-					if(!envoye.contains(user)){
+					if(!envoye.contains(user.getName())){
 						oldusers.add(user);
-						envoye.add(user);
+						envoye.add(user.getName());
 					}
 				}
 			}
@@ -484,6 +576,10 @@ public final class ClientTop extends JFrame implements ActionListener {
 				listeUsers.setSelectedIndex(0);
 		}
 		
+		/**
+		 * Fonction permettant de retourner l'utilisateur lié à cette socket
+		 * @return
+		 */
 		public Users getchatuser() {
 			return gotuser;
 		}
