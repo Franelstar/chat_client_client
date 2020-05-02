@@ -41,8 +41,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 	JComboBox listeUsers;
 	
 	Car_protocol car_protocol;
-	DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	Date date = new Date();
 	
 	Vector<Users> users = new Vector<Users>();
 	Vector<Users> oldusers = new Vector<Users>();
@@ -320,6 +318,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 	}
 	
 	public void sendtoothers(String message) {
+		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
 		ArrayList<Users> envoye = new ArrayList<Users>();
 		ArrayList<String> reponseProtocol = car_protocol.requete(message);
 		if(reponseProtocol.get(0) == "410" || reponseProtocol.get(0) == "300") {
@@ -496,7 +496,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 					Line = input.readLine();
 					System.out.println(Line);
 					ArrayList<String> reponseProtocol = car_protocol.requete(Line);
-					//output.println(Line+"\n");
+					DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
 					
 					if(!est_utilisateurIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15)) && gotuser == null) {
 						 if(reponseProtocol.get(0) == "200" && !est_utilisateur(reponseProtocol.get(1))) {
@@ -814,6 +815,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 				}
 			}catch(Exception ex) {
 				if(users.remove(gotuser) && !gotuser.getName().equals("")) {
+					DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					Date date = new Date();
 					clients.remove(this);
 					chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 					chatmsg.append(gotuser.getName() + " ==> Déconnecté\n\n");
