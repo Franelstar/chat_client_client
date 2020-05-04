@@ -241,7 +241,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	/**
 	 * Fonction permettant de savoir si un utilisateur est dans le réseau
 	 * @param nom
-	 * @return
+	 * @return boolean
 	 */
 	public Boolean est_utilisateur(String nom) {
 		for(Users user : users) {
@@ -256,7 +256,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	/**
 	 * Fonction permettant de savoir si une adresse IP est dans le réseau
 	 * @param ip
-	 * @return
+	 * @return boolean
 	 */
 	public Boolean est_utilisateurIP(String ip) {
 		for(Users user : users) {
@@ -270,7 +270,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	/**
 	 * Fonction permettant de retourner un utilisateur à partir de son nom
 	 * @param nom
-	 * @return
+	 * @return user
 	 */
 	public Users getUser(String nom) {
 		for(Users user : users) {
@@ -283,7 +283,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	/**
 	 * Fonction permettant de retourner un utilisateur à partir de son adresse IP
 	 * @param ip
-	 * @return
+	 * @return user
 	 */
 	public Users getUserIP(String ip) {
 		for(Users user : users) {
@@ -299,7 +299,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 	 * @param ip
 	 * @param port
 	 * @param timeout
-	 * @return
 	 */
 	public Future<Boolean> portIsOpen(final ExecutorService es, final String ip, final int port, final int timeout) {
 		return es.submit(new Callable<Boolean>() {
@@ -326,11 +325,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 	 * @param message
 	 */
 	public void sendtoall(Users user, String message) {
-		ArrayList<Users> envoye = new ArrayList<Users>();
+		ArrayList<String> envoye = new ArrayList<String>();
 		for(Manageuser c : clients) {
-			if(!envoye.contains(c.getchatuser())  && c.getchatuser() != null && !c.getchatuser().equals("")) {
+			if(!envoye.contains(c.getchatuser().getName())  && c.getchatuser() != null && !c.getchatuser().getName().equals("")) {
 				c.sendMessage(user.getName(), message);
-				envoye.add(c.getchatuser());
+				envoye.add(c.getchatuser().getName());
 			}
 		}
 	}
@@ -340,11 +339,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 	 * @param message
 	 */
 	public void sendtoall(String message) {
-		ArrayList<Users> envoye = new ArrayList<Users>();
+		ArrayList<String> envoye = new ArrayList<String>();
 		for(Manageuser c : clients) {
-			if(!envoye.contains(c.getchatuser()) && c.getchatuser() != null && !c.getchatuser().equals("")) {
+			if(!envoye.contains(c.getchatuser().getName()) && c.getchatuser() != null && !c.getchatuser().getName().equals("")) {
 				c.sendMessage(message);
-				envoye.add(c.getchatuser());
+				envoye.add(c.getchatuser().getName());
 			}
 		}
 	}
@@ -353,12 +352,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 	 * Fonction permettant d'envoyer un message à une utilisateur du réseau
 	 */
 	public void sendtouser(String message, String user) {
-		ArrayList<Users> envoye = new ArrayList<Users>();
+		ArrayList<String> envoye = new ArrayList<String>();
 		for(Manageuser c : clients) {
 			if((c.getchatuser() != null && c.getchatuser().getName().equals(user)) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
-				if(!envoye.contains(c.getchatuser())){
+				if(!envoye.contains(c.getchatuser().getName())){
 					c.sendMessage(message);
-					envoye.add(c.getchatuser());
+					envoye.add(c.getchatuser().getName());
 				}
 			}
 		}
@@ -384,15 +383,15 @@ public final class ClientTop extends JFrame implements ActionListener {
 	public void sendtoothers(String message) {
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		ArrayList<Users> envoye = new ArrayList<Users>();
+		ArrayList<String> envoye = new ArrayList<String>();
 		ArrayList<String> reponseProtocol = car_protocol.requete(message);
 		if(reponseProtocol.get(0) == "410" || reponseProtocol.get(0) == "300") {
 			for(int i = 2; i < reponseProtocol.size(); i++) {
 				for(Manageuser c : clients) {
 					if((c.getchatuser() != null && c.getchatuser().getName().equals(reponseProtocol.get(i))) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
-						if(!envoye.contains(c.getchatuser())){
+						if(!envoye.contains(c.getchatuser().getName())){
 							c.sendMessage(message);
-							envoye.add(c.getchatuser());
+							envoye.add(c.getchatuser().getName());
 						}
 					}
 				}
@@ -410,9 +409,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 					for(Users user : g.listeUsers()) {
 						for(Manageuser c : clients) {
 							if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
-								if(!envoye.contains(c.getchatuser())){
+								if(!envoye.contains(c.getchatuser().getName())){
 									c.sendMessage(message);
-									envoye.add(c.getchatuser());
+									envoye.add(c.getchatuser().getName());
 								}
 							}
 						}
@@ -429,9 +428,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 						for(Users user : g.listeUsers()) {
 							for(Manageuser c : clients) {
 								if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username))) {
-									if(!envoye.contains(c.getchatuser())){
+									if(!envoye.contains(c.getchatuser().getName())){
 										c.sendMessage(message);
-										envoye.add(c.getchatuser());
+										envoye.add(c.getchatuser().getName());
 									}
 								}
 							}
@@ -460,9 +459,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 							for(Users user : g.listeUsers()) {
 								for(Manageuser c : clients) {
 									if((c.getchatuser() != null && c.getchatuser().getName().equals(user.getName())) || (c.getchatuser() != null && c.getchatuser().getName().equals(username)) || (c.getchatuser() != null && c.getchatuser().getName().equals(u.getName()))) {
-										if(!envoye.contains(c.getchatuser())){
+										if(!envoye.contains(c.getchatuser().getName())){
 											c.sendMessage(message);
-											envoye.add(c.getchatuser());
+											envoye.add(c.getchatuser().getName());
 										}
 									}
 								}
@@ -602,7 +601,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 				        	  if(reponseProtocol.size() == 3) {
 				        		  gotuser.setStatus(Integer.parseUnsignedInt(reponseProtocol.get(2)));
 				        	  }
-					          users.add(gotuser);
+				        	  
+				        	  if(!est_utilisateur(gotuser.getName()))
+				        		  users.add(gotuser);
 					          
 					          try {
 					        	  System.out.println("Jinitie la troisieme partie avec :"+reponseProtocol.get(1));
@@ -753,14 +754,14 @@ public final class ClientTop extends JFrame implements ActionListener {
 								chatmsg.append("Vous avez été ajouté dans le groupe <<" + reponseProtocol.get(1) + ">>\n");
 								chatmsg.append("Liste des membres du groupe : | ");
 								Group g = new Group(reponseProtocol.get(1));
-								ArrayList<Users> ajoute = new ArrayList<Users>();
+								ArrayList<String> ajoute = new ArrayList<String>();
 								for(int i = 2; i < reponseProtocol.size(); i++) {
 									Users u = null;
 									for(Users user : users) {
 										if(user.getName().equals(reponseProtocol.get(i))) {
-											if(!ajoute.contains(user)){
+											if(!ajoute.contains(user.getName())){
 												u = user;
-												ajoute.add(user);
+												ajoute.add(user.getName());
 											}
 										}
 									}
@@ -895,8 +896,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 						} else if(reponseProtocol.get(0).equals("900")) {
 							chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 							chatmsg.append("---------- APPLICATION DE TCHAT AVEC LE PROTOCOLE CAR");
-						}else {
-							//chatmsg.append(reponseProtocol.get(0)+"\n");
+						} else if(reponseProtocol.get(0).startsWith("E")) {
+							output.println(car_protocol.broadcast_(reponseProtocol.get(0)));
 						}
 					}
 					

@@ -60,7 +60,7 @@ public class Users {
 	
 	/**
 	 * Retourne le status de l'utilisateur
-	 * @return
+	 * @return int
 	 */
 	public int getStatus() {
 		return status;
@@ -68,7 +68,7 @@ public class Users {
 	
 	/**
 	 * Retourne le nom de l'utilisateur
-	 * @return
+	 * @return String
 	 */
 	public String getName() {
 		return name;
@@ -92,7 +92,7 @@ public class Users {
 	
 	/**
 	 * Retourne l'adresse IP de l'utilisateur
-	 * @return
+	 * @return String
 	 */
 	public String getIP() {
 		return ipAdress;
@@ -108,7 +108,7 @@ public class Users {
 	
 	/**
 	 * Retourne le port de l'utilisateur
-	 * @return
+	 * @return int
 	 */
 	public int getPort() {
 		return port;

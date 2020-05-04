@@ -41,7 +41,7 @@ public class Group {
 	
 	/**
 	 * Retourne la liste des utilisateurs
-	 * @return
+	 * 
 	 */
 	public ConcurrentLinkedQueue<Users> listeUsers(){
 		return users;
@@ -49,7 +49,7 @@ public class Group {
 	
 	/**
 	 * Retourne le nom du groupe
-	 * @return
+	 * @return String
 	 */
 	public String getNomGroup() {
 		return nomGroupe;

@@ -120,8 +120,6 @@ public class Car_protocol {
 	 * Interprétation de la commande USERS
 	 * Code général 260-269
 	 * 
-	 * @param list_users
-	 * @return
 	 */
 	public void users() {
 		if(parts.length == 1) {
