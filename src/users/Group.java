@@ -17,7 +17,7 @@ public class Group {
 	
 	/**
 	 * Constructeur
-	 * @param nom
+	 * @param nom Nom du groupe (String)
 	 */
 	public Group(String nom) {
 		nomGroupe = nom;
@@ -25,7 +25,7 @@ public class Group {
 	
 	/**
 	 * Permet d'ajouter un utilisateur
-	 * @param u
+	 * @param u Utilisateur (Users)
 	 */
 	public void ajouterUser(Users u) {
 		users.add(u);
@@ -33,7 +33,7 @@ public class Group {
 	
 	/**
 	 * Permet d'enlever un utilisateur dans le groupe
-	 * @param u
+	 * @param u Utilisateur du groupe (Users)
 	 */
 	public void enleverUser(Users u) {
 		users.remove(u);
@@ -49,7 +49,7 @@ public class Group {
 	
 	/**
 	 * Retourne le nom du groupe
-	 * @return String
+	 * @return String Nom du groupe
 	 */
 	public String getNomGroup() {
 		return nomGroupe;

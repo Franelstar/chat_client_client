@@ -17,8 +17,8 @@ public class Users {
 	
 	/**
 	 * Constructeur
-	 * @param ip
-	 * @param n
+	 * @param ip Adresse IP (String)
+	 * @param n Nom (String)
 	 */
 	public Users(String ip, String n) {
 		ipAdress = ip;
@@ -28,7 +28,7 @@ public class Users {
 	
 	/**
 	 * Constructeur
-	 * @param ip
+	 * @param ip Adresse IP (String)
 	 */
 	public Users(String ip) {
 		ipAdress = ip;
@@ -37,10 +37,10 @@ public class Users {
 	
 	/**
 	 * Constructeur
-	 * @param ip
-	 * @param n
-	 * @param p
-	 * @param e
+	 * @param ip Adresse Ip (String)
+	 * @param n Nom (String)
+	 * @param p Port (Int)
+	 * @param e Status (Int)
 	 */
 	public Users(String ip, String n, int p, int e) {
 		ipAdress = ip;
@@ -52,7 +52,7 @@ public class Users {
 	
 	/**
 	 * Changer le status de l'utilisateur
-	 * @param s
+	 * @param s Status (Int)
 	 */
 	public void setStatus(int s) {
 		status = s;
@@ -60,7 +60,7 @@ public class Users {
 	
 	/**
 	 * Retourne le status de l'utilisateur
-	 * @return int
+	 * @return int Status
 	 */
 	public int getStatus() {
 		return status;
@@ -68,7 +68,7 @@ public class Users {
 	
 	/**
 	 * Retourne le nom de l'utilisateur
-	 * @return String
+	 * @return String Nom
 	 */
 	public String getName() {
 		return name;
@@ -76,7 +76,7 @@ public class Users {
 	
 	/**
 	 * Changer le nom de l'utilisateur
-	 * @param n
+	 * @param n Nom (string)
 	 */
 	public void setName(String n) {
 		name = n;
@@ -84,7 +84,7 @@ public class Users {
 	
 	/**
 	 * Changer l'adresse IP de l'utilisateur
-	 * @param ip
+	 * @param ip Adresse Ip (String)
 	 */
 	public void setIP(String ip) {
 		ipAdress = ip;
@@ -92,7 +92,7 @@ public class Users {
 	
 	/**
 	 * Retourne l'adresse IP de l'utilisateur
-	 * @return String
+	 * @return String Adresse Ip
 	 */
 	public String getIP() {
 		return ipAdress;
@@ -100,7 +100,7 @@ public class Users {
 	
 	/**
 	 * Modifie le port de l'utilisateur
-	 * @param p
+	 * @param p Port (Int)
 	 */
 	public void setPort(int p) {
 		port = p;
@@ -108,7 +108,7 @@ public class Users {
 	
 	/**
 	 * Retourne le port de l'utilisateur
-	 * @return int
+	 * @return int Port
 	 */
 	public int getPort() {
 		return port;

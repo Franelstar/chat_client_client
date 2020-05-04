@@ -48,7 +48,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Constructeur
-	 * @param uname (Nom d'utilisateur)
+	 * @param uname Nom d'utilisateur (String)
 	 * @throws Exception
 	 */
 	public ClientTop(String uname) throws Exception{
@@ -119,6 +119,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de gérer les interactions avec les différents boutons de l'interface graphique
+	 * @param evt Evenement
 	 */
 	//@Override
 	public void actionPerformed(ActionEvent evt) {
@@ -240,7 +241,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de savoir si un utilisateur est dans le réseau
-	 * @param nom
+	 * @param nom Nom de l'utilisateur (String)
 	 * @return boolean
 	 */
 	public Boolean est_utilisateur(String nom) {
@@ -255,7 +256,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de savoir si une adresse IP est dans le réseau
-	 * @param ip
+	 * @param ip Adresse IP (String)
 	 * @return boolean
 	 */
 	public Boolean est_utilisateurIP(String ip) {
@@ -269,8 +270,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de retourner un utilisateur à partir de son nom
-	 * @param nom
-	 * @return user
+	 * @param nom Nom de l'utilisateur(String)
+	 * @return user Objet de type USERS - Null si aucun utilisateur trouvé
 	 */
 	public Users getUser(String nom) {
 		for(Users user : users) {
@@ -282,8 +283,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de retourner un utilisateur à partir de son adresse IP
-	 * @param ip
-	 * @return user
+	 * @param ip Adresse IP de l'utilisateur
+	 * @return user Objet de type USERS - Null si aucun utilisateur trouvé
 	 */
 	public Users getUserIP(String ip) {
 		for(Users user : users) {
@@ -321,8 +322,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant d'envoyer un message à des utilisateurs du réseau
-	 * @param user
-	 * @param message
+	 * @param user Utilisateur (USERS)
+	 * @param message Message à envoyer (String)
 	 */
 	public void sendtoall(Users user, String message) {
 		ArrayList<String> envoye = new ArrayList<String>();
@@ -336,12 +337,12 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant d'envoyer un message à tous les utilisateurs du réseau
-	 * @param message
+	 * @param message Message à envoyer (String)
 	 */
 	public void sendtoall(String message) {
 		ArrayList<String> envoye = new ArrayList<String>();
 		for(Manageuser c : clients) {
-			if(!envoye.contains(c.getchatuser().getName()) && c.getchatuser() != null && !c.getchatuser().getName().equals("")) {
+			if(c.getchatuser() != null && !envoye.contains(c.getchatuser().getName()) && !c.getchatuser().getName().equals("")) {
 				c.sendMessage(message);
 				envoye.add(c.getchatuser().getName());
 			}
@@ -365,7 +366,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant d'exécuter les commandes qui n'ont pas besoin de faire intervenir les autres utilisateurs
-	 * @param message
+	 * @param message Message à envoyer (String)
 	 */
 	public void sendtome(String message) {
 		for(Manageuser c : clients) {
@@ -378,7 +379,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	
 	/**
 	 * Fonction permettant de gérer les commandes qui n'ont pas été implémenté graphiquement
-	 * @param message
+	 * @param message Message à envoyer (String)
 	 */
 	public void sendtoothers(String message) {
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -495,8 +496,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		/**
 		 * Constructeur
-		 * @param client
-		 * @param u
+		 * @param client Socket client (Socket)
+		 * @param u Utilisateur (USERS)
 		 * @throws Exception
 		 */
 		public Manageuser(Socket client, Users u) throws Exception{
@@ -513,8 +514,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		/**
 		 * Constructeur
-		 * @param client
-		 * @param contact
+		 * @param client Socket client (Socket)
+		 * @param contact (Boolean)
 		 * @throws Exception
 		 */
 		public Manageuser(Socket client, Boolean contact) throws Exception{
@@ -535,8 +536,8 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		/**
 		 * Fonction permettant d'envoyer un message à un utilisateur
-		 * @param chatuser
-		 * @param chatmsg
+		 * @param chatuser Nom du destinataire (String)
+		 * @param chatmsg Message à envoyer (String)
 		 */
 		public void sendMessage(String chatuser, String chatmsg) {
 			output.println(chatmsg);
@@ -544,7 +545,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		/**
 		 * Fonction permettant d'envoyer un message à tous les utilisateur
-		 * @param chatmsg
+		 * @param chatmsg Message à envoyer (String)
 		 */
 		public void sendMessage(String chatmsg) {
 			if(!gotuser.getName().equals("")) {
@@ -577,7 +578,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		/**
 		 * Fonction permettant de retourner l'utilisateur lié à cette socket
-		 * @return
+		 * @return gotuser Utilisateur de la socket (Users)
 		 */
 		public Users getchatuser() {
 			return gotuser;
