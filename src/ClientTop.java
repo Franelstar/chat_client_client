@@ -64,7 +64,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 		
 		while(true) {
 			Socket client = server.accept();
-			System.out.println("Connexion serveur");
 			
 			clients.add(new Manageuser(client, false));
 		}
@@ -328,7 +327,7 @@ public final class ClientTop extends JFrame implements ActionListener {
 	public void sendtoall(Users user, String message) {
 		ArrayList<String> envoye = new ArrayList<String>();
 		for(Manageuser c : clients) {
-			if(!envoye.contains(c.getchatuser().getName())  && c.getchatuser() != null && !c.getchatuser().getName().equals("")) {
+			if(c.getchatuser() != null && !envoye.contains(c.getchatuser().getName()) && !c.getchatuser().getName().equals("")) {
 				c.sendMessage(user.getName(), message);
 				envoye.add(c.getchatuser().getName());
 			}
@@ -507,7 +506,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 			gotuser = u;
 			
 			output.println("/CONNECT " + username + " " + status);
-			System.out.println("Conclient");
 			
 			start();
 		}
@@ -528,7 +526,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 	        			  socketClient.getLocalPort(), 1);
 				users.add(gotuser);
 				output.println("/CONNECT " + username + " " + status);
-				System.out.println("Premiere partie");
 			}
 			
 			start();
@@ -590,7 +587,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 			try {
 				while(true) {
 					Line = input.readLine();
-					System.out.println(Line);
 					ArrayList<String> reponseProtocol = car_protocol.requete(Line);
 					DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 					Date date = new Date();
@@ -607,14 +603,11 @@ public final class ClientTop extends JFrame implements ActionListener {
 				        		  users.add(gotuser);
 					          
 					          try {
-					        	  System.out.println("Jinitie la troisieme partie avec :"+reponseProtocol.get(1));
 					        	  clients.add(new Manageuser(new Socket(socketClient.getRemoteSocketAddress().toString().substring(1, 15), 1234), true));
 					          } catch(Exception ex) {
 					        	  
 					          }
 					          
-					          System.out.println("Deuxieme partie");
-					          System.out.println("On est connecté");
 					          output.println(car_protocol.broadcast_("Connexion réussie"));
 				          }
 					} else if(est_utilisateurIP(socketClient.getRemoteSocketAddress().toString().substring(1, 15))) {
@@ -626,10 +619,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 				        	  if(reponseProtocol.size() == 3) {
 				        		  gotuser.setStatus(Integer.parseUnsignedInt(reponseProtocol.get(2)));
 				        	  }
-					          //users.add(gotuser);
-					          System.out.println("Fin la troisieme partie avec :"+reponseProtocol.get(1));
-					          System.out.println("Troisieme partie");
-					          System.out.println("On est connecté");
 					          output.println(car_protocol.broadcast_("Connexion réussie"));
 						 }        
 					}
@@ -734,11 +723,9 @@ public final class ClientTop extends JFrame implements ActionListener {
 							}
 							
 						} else if(reponseProtocol.get(0).equals("220")) {
-							System.out.println(Line);
 							output.println("/ID "+username+" "+status);
 						} else if(reponseProtocol.get(0).equals("230")) {
 							if(gotuser.getName().equals("")) {
-								System.out.println(Line);
 								gotuser.setName(reponseProtocol.get(1));
 								gotuser.setStatus(Integer.parseInt(reponseProtocol.get(2)));
 								output.println(car_protocol.broadcast_("Connexion réussie"));
@@ -918,8 +905,6 @@ public final class ClientTop extends JFrame implements ActionListener {
 					clients.remove(this);
 					chatmsg.append("----------------------- " + format.format(date) + " -------------------------\n");
 					chatmsg.append(gotuser.getName() + " ==> Déconnecté\n\n");
-					
-					//On sort de tous les groups
 					
 					try {
 						socketClient.close();
